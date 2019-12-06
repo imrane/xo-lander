@@ -1,0 +1,20 @@
+{
+  "name": "xo-farhana-lander",
+  "description": "Landing page for course launch",
+  "version": "0.1.0",
+  "author": "Imran Esmail",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "dotenv": "8.2.0",
+    "netlify-lambda": "1.6.3",
+    "request": "2.88.0"
+  },
+  "proxy": {
+    "/.netlify/functions": {
+      "target": "http://localhost:8888",
+      "pathRewrite": {
+        "^/\\.netlify/functions": ""
+      }
+    }
+  }
+}
