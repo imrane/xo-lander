@@ -118,16 +118,29 @@ $(document).ready(function ($) {
   //  Form Validation
 
   $(".form .btn[type='submit']").on("click", function () {
+    var successMsg = '<div class="status-icon valid"><i class="icon_check"></i></div>';
+    var errorMsg = '<div class="status-icon invalid"><i class="icon_close"></i></div>';
     var button = $(this);
     var form = $(this).closest("form");
     button.prepend("<div class='status'></div>");
     form.validate({
       submitHandler: function () {
-        $.post("/.netlify/functions/signup", form.serialize(), function (response) {
-          console.log(response);
-          button.find(".status").append(response);
+        $.post("/.netlify/functions/signup", form.serialize(), () => {
+          // Remove error messages
+          form.find(".form-group").removeClass("has-error");
+          button.find(".status").empty();
+          form.find(".help-block").text("");
+        }).done((msg) => {
+          // Append success mark & disable form
+          button.find(".status").append(successMsg);
           form.addClass("submitted");
-        });
+        }).fail((xhr, status, error) => {
+          // Add error class
+          form.find(".form-group").addClass("has-error");
+          // Display error
+          form.find(".help-block").text(xhr.responseText);
+          button.find(".status").append(errorMsg);
+        })
         return false;
       }
     });

@@ -1,6 +1,5 @@
 const axios = require('axios')
 const querystring = require('querystring')
-require('dotenv').config()
 
 const mailchimpAPI = process.env.MAILCHIMP_API_KEY
 const mailchimpListID = process.env.MAILCHIMP_LIST_ID
@@ -10,13 +9,9 @@ exports.handler = async (event, context, callback) => {
   // Pull down form data
   const formData = querystring.parse(event.body)
 
-  // Set error messages
-  const successMessage = "<div class='status-icon valid'><i class='icon_check'></i></div>"
-  const failureMessage = "<div class='status-icon invalid'><i class='icon_close'></i></div>"
-
-  // Check email & name
+  // Check email and name
   if (!formData.email || !formData.firstName) {
-    return { statusCode: 200, body: failureMessage }
+    return { statusCode: 400, body: 'First name or email are required.' }
   }
 
   // Retrieve name and email
@@ -47,9 +42,9 @@ exports.handler = async (event, context, callback) => {
     }
   }).then(() => ({
     statusCode: 200,
-    body: successMessage
+    body: 'Successfully added subscriber.'
   })).catch((e) => ({
-    statusCode: 200,
-    body: failureMessage
+    statusCode: e.response.data.status,
+    body: e.response.data.title
   }))
 }
